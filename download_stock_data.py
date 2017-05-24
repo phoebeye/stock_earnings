@@ -1,6 +1,7 @@
 import sys
 import os
-import urllib2
+# import urllib2
+# from urllib3.contrib import pyopenssl
 import csv
 import json
 import datetime
@@ -14,13 +15,11 @@ from bs4 import BeautifulSoup
 # date_time = datetime.datetime(2017,03,01,6,0)
 
 def main(argv):
-    '''
-    working_dir = argv[1]
-    output_csv = os.path.join(working_dir,root_name + '.csv')
-    '''
+    working_dir = '/Users/Phoebe/Documents/data_analysis/stk_price_repo'
     workbook_name = datetime.datetime.now().strftime ("%m-%d-%Y")
-    workbook = xlsxwriter.Workbook(workbook_name + '_stock_analysis.xlsx')
-    for num in range(9,10):
+    output_filename = os.path.join(working_dir, workbook_name + '_stock_analysis.xlsx')
+    workbook = xlsxwriter.Workbook(output_filename)
+    for num in range(22,23):
         date_time = datetime.datetime(2017,5,num,6,0)
         get_stickers(date_time,workbook)
     print 'closing workbook save now'
@@ -33,11 +32,9 @@ def get_stickers(date_time,workbook):
     print epoch, 'epoch'
     wiki = "https://www.zacks.com/includes/classes/z2_class_calendarfunctions_data.php?calltype=eventscal&date=" + str(epoch) +"&type=1"
     headers = {'User-agent':'Mozilla/5.0'}
-    req = urllib2.Request(wiki, None, headers)
-    page = urllib2.urlopen(req)
-    page_content = page.read()
-    #print page_content
-    page_obj =json.loads(page_content)
+    page = requests.get(wiki)
+
+    page_obj = page.json()
     stickers_list = [];
     for line in page_obj['data']:
 
